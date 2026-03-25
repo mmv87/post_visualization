@@ -11,6 +11,7 @@ import os
 from sklearn.decomposition import PCA
 import umap
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 
 vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
 
@@ -30,10 +31,22 @@ token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding
 umap_model = umap.UMAP(n_neighbors=15,
     min_dist=0.1,metric="cosine")  # use same metric as embeddings
 
-embed_file="./embed_1.npy"
-embeddings =np.load(embed_file)
+###update the file
+embed_file="./stage_1_input_embed.npy"
+base_input_embed="./base_model_input_embedding.npy"
 
-embeddings_2d = umap_model.fit_transform(embeddings)
+embeddings =np.load(base_input_embed)
+print(embeddings.shape)
+##pca to reduce the dimension to 24 
+pca = PCA(n_components=24)
+embeddings_pca = pca.fit_transform(embeddings)
+
+umap_model = umap.UMAP(
+    n_neighbors=15,
+    min_dist=0.1,
+    metric="cosine"
+)
+embeddings_2d = umap_model.fit_transform(embeddings_pca)
 print(embeddings_2d.shape)
 labels=[]
 ##loop to decode the tokenizer
@@ -64,7 +77,6 @@ for node in G.nodes():
     edges = sorted(edges, key=lambda x: x[2]['weight'], reverse=True)
     for u, v, d in edges[:k]:
         G_filtered.add_edge(u, v, weight=d['weight'])
-        
         
 pos = {labels[i]: embeddings_2d[i] for i in range(len(labels))}
 

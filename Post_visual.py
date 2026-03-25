@@ -37,11 +37,12 @@ with torch.no_grad():
     embeddings=embeddings_layer(token_ids)
 
 embeddings = embeddings.view(-1, embeddings.shape[-1])
-_file_model_embedding="./model_embedding.mpy"
+_file_model_embedding="./base_model_input_embedding.npy"
 
 import torch.nn.functional as F
 embeddings = F.normalize(embeddings, p=2, dim=1)
-np_embedding=embeddings.cpu().numpy()
+
+np_embedding=embeddings.detach().cpu().to(torch.float32).numpy()
 np.save(_file_model_embedding,np_embedding)
 
 """pca = PCA(n_components=24)
@@ -74,7 +75,9 @@ for i, token in enumerate(token_ids[0]):
 plt.title("Token Embedding Visualization")
 plt.show()"""
 
+
 ###plotting phase
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 _file_embed_1="./embed_1.npy"
@@ -130,7 +133,8 @@ nx.draw(
     node_size=300,
     width=weights  # edge thickness = similarity
 )
-plt.show()
+
+plt.show()"""
 
 
 

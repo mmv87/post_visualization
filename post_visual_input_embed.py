@@ -37,6 +37,7 @@ model.resize_token_embeddings(len(tokenizer))
 token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
 
 trained_input_embed=torch.load(_input_embed_layer,map_location=device)
+print(f"input_embed_keys:{trained_input_embed.keys()}")
 input_embed_weights=trained_input_embed['weight']
 
 input_embeddings=model.get_input_embeddings()
@@ -49,7 +50,7 @@ with torch.no_grad():
 
 vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
 embeddings = F.normalize(vocab_embedding, p=2, dim=1)
-vocab_embedding_npy=embeddings.cpu().numpy()
+vocab_embedding_npy=embeddings.cpu().to(torch.float32).numpy()
 
 np.save(embedding_file,vocab_embedding_npy)
 print('file_saved')
