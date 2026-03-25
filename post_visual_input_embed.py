@@ -42,7 +42,7 @@ print('loaded_embeddings')
 
 ### without calculating the gradients
 with torch.no_grad():
-    input_embeddings.model.copy_(trained_input_embed)
+    input_embeddings.weight.copy_(trained_input_embed)
     vocab_embedding=input_embeddings(token_ids[0])
 
 vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
