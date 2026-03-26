@@ -35,16 +35,16 @@ tokenizer.add_special_tokens(special_token_dict)
 model.resize_token_embeddings(len(tokenizer))
 token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
 
-trained_input_embed=torch.load(_input_embed_layer,map_location=device)
-print(f"input_embed_keys:{trained_input_embed.keys()}")
-input_embed_weights=trained_input_embed['weight']
+##trained_input_embed=torch.load(_input_embed_layer,map_location=device)
+"""print(f"input_embed_keys:{trained_input_embed.keys()}")
+input_embed_weights=trained_input_embed['weight']"""
 
 print('loaded_embeddings')
 
 ### without calculating the gradients
 with torch.no_grad():
     ##input_embeddings.weight.copy_(input_embed_weights)
-    input_embeddings=model.get_input_embeddings().load_state_dict(torch.load(embedding_file))
+    input_embeddings=model.get_input_embeddings().load_state_dict(torch.load(_input_embed_layer))
     vocab_embedding=input_embeddings(token_ids[0])
 
 vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
