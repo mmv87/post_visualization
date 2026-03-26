@@ -40,11 +40,26 @@ model.resize_token_embeddings(len(tokenizer))
 peft_llm_model=PeftModel.from_pretrained(model, f"{checkpoint_dir}/phi4-ts-adapter_ver2")
 ###peft_llm_model=peft_llm_model.merge_and_unload()
 token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
-
 # Assuming peft_llm_model is loaded but NOT yet merged
-embed_layer = peft_llm_model.get_input_embeddings()
-print(f"Module Class: {type(embed_layer)}")
+###embed_layer = peft_llm_model.get_input_embeddings()
 
+embed_layer = peft_llm_model.get_input_embeddings()
+
+if hasattr(embed_layer, "modules_to_save"):
+    print("Surgically syncing trained embeddings to base model...")
+    # .data.copy_() ensures we overwrite the actual memory buffer
+    trained_weights = embed_layer.modules_to_save.default.weight.data
+    embed_layer.original_module.weight.data.copy_(trained_weights)
+
+# 3. Repeat for the LM Head (if you saved it)
+head_layer = peft_llm_model.get_output_embeddings()
+if hasattr(head_layer, "modules_to_save"):
+    trained_head = head_layer.modules_to_save.default.weight.data
+    head_layer.original_module.weight.data.copy_(trained_head)
+print(f"Module Class: {type(embed_layer)}")
+peft_llm_model=peft_llm_model.merge_and_unload()
+
+"""
 # Check if PEFT actually created the wrapper for modules_to_save
 if hasattr(embed_layer, "modules_to_save"):
     # This is the TENSOR that was actually updated during training
@@ -59,7 +74,7 @@ if hasattr(embed_layer, "modules_to_save"):
     else:
         print("✅ Success: The embeddings have been updated by training!")
 else:
-    print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
+    print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")"""
 
 """
 with torch.no_grad():
@@ -79,17 +94,17 @@ else:
 ##trained_input_embed=torch.load(_input_embed_layer,map_location=device)
 """print(f"input_embed_keys:{trained_input_embed.keys()}")
 input_embed_weights=trained_input_embed['weight']"""
-"""
+
 print('loaded_embeddings')
 ### without calculating the gradients
 with torch.no_grad():
-    vocab_embedding=peft_llm_model.get_input_embeddings()(token_ids[0])
+    vocab_embedding=embed_layer(token_ids[0])
 
 vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
 ##embeddings = F.normalize(vocab_embedding, p=2, dim=1)
 vocab_embedding_npy=vocab_embedding.cpu().to(torch.float32).numpy()
 
 np.save(embedding_file,vocab_embedding_npy)
-print('file_saved')"""
+print('file_saved')
 
     
