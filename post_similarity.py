@@ -12,7 +12,20 @@ modelpath="D:/hf_cache/hub/models--microsoft--Phi-4-mini-reasoning/snapshots/0e3
 ##model_name="/home/mmk/projects/def-zonata/mmk/hf_cache/hub/models--microsoft--Phi-4-mini-reasoning/snapshots/7a8c4e2e81eae20a606d811f475d7dc316dd916a"
 tokenizer=AutoTokenizer.from_pretrained(modelpath,local_files_only=True)
 token_ids=tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
+"""
+##check to get the name
+model=AutoModelForCausalLM.from_pretrained(modelpath,local_files_only=True)
+for name, param in model.named_parameters():
+    print(f"name:{name}, parameter:{param.shape}")
+###to chechthe linear layers
+import torch.nn as nn
 
+for name, module in model.named_modules():
+    if isinstance(module, nn.Linear):
+        print(f"Found a Linear Layer: {name}")
+    else:
+        print(f"a module: {name}")"""
+              
 labels=[tokenizer.decode(t) for t in token_ids[0]]
 ##load the embedding_npy
 embed_1=np.load("./base_model_input_embedding.npy")

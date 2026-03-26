@@ -38,15 +38,49 @@ tokenizer.add_special_tokens(special_token_dict)
 model.resize_token_embeddings(len(tokenizer))
 
 peft_llm_model=PeftModel.from_pretrained(model, f"{checkpoint_dir}/phi4-ts-adapter_ver2")
-peft_llm_model=peft_llm_model.merge_and_unload()
+###peft_llm_model=peft_llm_model.merge_and_unload()
 token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
+
+# Assuming peft_llm_model is loaded but NOT yet merged
+embed_layer = peft_llm_model.get_input_embeddings()
+print(f"Module Class: {type(embed_layer)}")
+
+# Check if PEFT actually created the wrapper for modules_to_save
+if hasattr(embed_layer, "modules_to_save"):
+    # This is the TENSOR that was actually updated during training
+    trained_weights = embed_layer.modules_to_save.default.weight
+    # This is the ORIGINAL tensor from the base model
+    original_weights = embed_layer.original_module.weight
+    # Measure the difference
+    diff = torch.abs(trained_weights - original_weights).max().item()
+    print(f"Max difference in weights: {diff:.8f}")
+    if diff == 0:
+        print("❌ Training Error: The 'trained' weights are identical to the base weights.")
+    else:
+        print("✅ Success: The embeddings have been updated by training!")
+else:
+    print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
+
+"""
+with torch.no_grad():
+    embed_module = peft_llm_model.get_input_embeddings()
+    """
+###print(f"Type of embedding: {type(embed_module)}") 
+# Should show 'ModulesToSaveWrapper'
+# 3. GET THE ACTUAL TRAINED TENSOR
+# In PEFT, the trained weights for modules_to_save are hidden here:
+"""
+if hasattr(embed_module, "modules_to_save"):
+    trained_weights = embed_module.modules_to_save.default.weight
+    print("Found trained weights in modules_to_save!")
+else:
+    trained_weights = embed_module.weight"""
 
 ##trained_input_embed=torch.load(_input_embed_layer,map_location=device)
 """print(f"input_embed_keys:{trained_input_embed.keys()}")
 input_embed_weights=trained_input_embed['weight']"""
-
+"""
 print('loaded_embeddings')
-
 ### without calculating the gradients
 with torch.no_grad():
     vocab_embedding=peft_llm_model.get_input_embeddings()(token_ids[0])
@@ -56,6 +90,6 @@ vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
 vocab_embedding_npy=vocab_embedding.cpu().to(torch.float32).numpy()
 
 np.save(embedding_file,vocab_embedding_npy)
-print('file_saved')
+print('file_saved')"""
 
     
