@@ -12,6 +12,8 @@ from sklearn.decomposition import PCA
 import umap
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
+import networkx as nx
+
 
 vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
 
@@ -27,9 +29,6 @@ model_name='./hub/microsoft/phi-4-mini-reasoning'
 tokenizer=AutoTokenizer.from_pretrained(modelpath,local_file_only=True)
 ###input_text='The following timeseries in the model'
 token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
-
-umap_model = umap.UMAP(n_neighbors=15,
-    min_dist=0.1,metric="cosine")  # use same metric as embeddings
 
 ###update the file
 embed_file="./stage_1_input_embed.npy"
@@ -56,11 +55,10 @@ for i,token in enumerate(token_ids[0]):
 ###graph_ is a sparse matrix storing fuzzy edge weights
 graph = umap_model.graph_
 
-import networkx as nx
 G = nx.Graph()
-###plot only stromg edges
+###plot only strong edges
 G_filtered = nx.Graph()
-k = 2  # top neighbors per node
+k=2  # top neighbors per node
 
 ###threshold = np.percentile(weights, 75)  # keep top 25% strongest edges
 """G_filtered = nx.Graph(
@@ -70,7 +68,10 @@ coo = graph.tocoo()  # convert to COO for iteration
 for i, j, v in zip(coo.row, coo.col, coo.data):
     if i != j:  # ignore self-loops
         G.add_edge(labels[i], labels[j], weight=v)
-        
+
+pos = {labels[i]: embeddings_2d[i] for i in range(len(labels))}
+
+##nx.draw_networkx_edges(G,pos,alpha=0.3)
 for node in G.nodes():
     edges = list(G.edges(node, data=True))
     # sort by weight descending
@@ -78,8 +79,6 @@ for node in G.nodes():
     for u, v, d in edges[:k]:
         G_filtered.add_edge(u, v, weight=d['weight'])
         
-pos = {labels[i]: embeddings_2d[i] for i in range(len(labels))}
-
 edges = G_filtered.edges(data=True)
 weights = np.array([d['weight'] for (_, _, d) in edges])
 print(f"weights:{weights}")
@@ -97,7 +96,7 @@ nx.draw(
     node_size=100,
     node_color=node_colors,
     cmap=plt.cm.tab20,
-    width=scaled_weights,         # edge thickness = fuzzy weight
+    width=weights,         # edge thickness = fuzzy weight
     edge_color=weights,           # edge color = fuzzy weight
     edge_cmap=plt.cm.viridis      # colormap for edges
 )
