@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 import json
 import torch.nn.functional as F
-
 from transformers import AutoModelForCausalLM,AutoTokenizer
 import numpy as np
 import os
@@ -40,12 +39,12 @@ trained_input_embed=torch.load(_input_embed_layer,map_location=device)
 print(f"input_embed_keys:{trained_input_embed.keys()}")
 input_embed_weights=trained_input_embed['weight']
 
-input_embeddings=model.get_input_embeddings()
 print('loaded_embeddings')
 
 ### without calculating the gradients
 with torch.no_grad():
-    input_embeddings.weight.copy_(input_embed_weights)
+    ##input_embeddings.weight.copy_(input_embed_weights)
+    input_embeddings=model.get_input_embeddings().load_state_dict(torch.load(embedding_file))
     vocab_embedding=input_embeddings(token_ids[0])
 
 vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
