@@ -44,8 +44,8 @@ print('loaded_embeddings')
 ### without calculating the gradients
 with torch.no_grad():
     ##input_embeddings.weight.copy_(input_embed_weights)
-    input_embeddings=model.get_input_embeddings().load_state_dict(torch.load(_input_embed_layer))
-    vocab_embedding=input_embeddings(token_ids[0])
+    model.get_input_embeddings().load_state_dict(torch.load(_input_embed_layer))
+    vocab_embedding=model.get_input_embeddings()(token_ids[0])
 
 vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
 embeddings = F.normalize(vocab_embedding, p=2, dim=1)
