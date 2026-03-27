@@ -35,10 +35,12 @@ tokenizer=AutoTokenizer.from_pretrained(model_name,local_files_only=True)
 
 special_token_dict={'pad_token':"<|pad|>","additional_special_tokens":['<ts>','<ts/>']}
 tokenizer.add_special_tokens(special_token_dict)
-model.resize_token_embeddings(len(tokenizer))
+##model.resize_token_embeddings(len(tokenizer))
 
 peft_llm_model=PeftModel.from_pretrained(model, f"{checkpoint_dir}/phi4-ts-adapter_ver2")
+peft_llm_model.resize_token_embeddings(len(tokenizer))
 token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
+
 # Assuming peft_llm_model is loaded but NOT yet merged
 embed_layer = peft_llm_model.get_input_embeddings()
 if hasattr(embed_layer, "modules_to_save"):
