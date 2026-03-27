@@ -64,8 +64,10 @@ final_embed_layer=peft_llm_model_1.get_input_embeddings()"""
 if hasattr(embed_layer, "modules_to_save"):
     # This is the TENSOR that was actually updated during training
     trained_weights = embed_layer.modules_to_save.default.weight
+    print(trained_weights.shape)
     # This is the ORIGINAL tensor from the base model
     original_weights = embed_layer.original_module.weight
+    print(original_weights.shape)
     # Measure the difference
     diff = torch.abs(trained_weights - original_weights).max().item()
     print(f"Max difference in weights: {diff:.8f}")
@@ -77,9 +79,8 @@ else:
     print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
     
     
-    
-"""   
+"""
 with torch.no_grad():
-    embed_module = peft_llm_model.get_input_embeddings()"""
-
+    embed_module = peft_llm_model.get_input_embeddings()
+"""
     
