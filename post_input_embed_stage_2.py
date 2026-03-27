@@ -70,18 +70,19 @@ if hasattr(embed_layer, "modules_to_save"):
     print(original_weights.shape)
     # Measure the difference
     diff = torch.abs(trained_weights - original_weights).max().item()
-    print(f"Max difference in weights: {diff:.8f}")
+    print(f"Max difference in weights: {diff:.3f}")
     if diff == 0:
         print("❌ Training Error: The 'trained' weights are identical to the base weights.")
     else:
         print("✅ Success: The embeddings have been updated by training!")
 else:
     print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
-    
+
     
 with torch.no_grad():
     vocab_embeddings = embed_layer(token_ids[0])
 
+print(f'vocab_embedding:{vocab_embeddings.shape}')
 
 vocab_embedding = vocab_embeddings.view(-1, vocab_embeddings.shape[-1])
 ##embeddings = F.normalize(vocab_embedding, p=2, dim=1)

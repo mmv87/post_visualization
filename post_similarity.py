@@ -35,7 +35,6 @@ sim_np=cosine_similarity(embed_1)
 plt.figure(figsize=(10, 8))
 plt.imshow(sim_np, cmap='viridis',vmin=-1, vmax=1)
 plt.colorbar()
-
 plt.xticks(range(len(labels)), labels, rotation=45)
 plt.yticks(range(len(labels)), labels)
 
