@@ -60,6 +60,7 @@ print(f"Module Class: {type(embed_layer)}")"""
 peft_llm_model_1=peft_llm_model.merge_and_unload()
 final_embed_layer=peft_llm_model_1.get_input_embeddings()"""
 
+
 # Check if PEFT actually created the wrapper for modules_to_save
 if hasattr(embed_layer, "modules_to_save"):
     # This is the TENSOR that was actually updated during training
@@ -68,6 +69,7 @@ if hasattr(embed_layer, "modules_to_save"):
     # This is the ORIGINAL tensor from the base model
     original_weights = embed_layer.original_module.weight
     print(original_weights.shape)
+    
     # Measure the difference
     diff = torch.abs(trained_weights - original_weights).max().item()
     print(f"Max difference in weights: {diff:.3f}")
@@ -80,7 +82,7 @@ else:
 
     
 with torch.no_grad():
-    vocab_embeddings = embed_layer(token_ids[0])
+    vocab_embeddings = trained_weights(token_ids[0])
 
 print(f'vocab_embedding:{vocab_embeddings.shape}')
 
