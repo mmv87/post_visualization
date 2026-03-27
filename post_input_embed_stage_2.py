@@ -43,7 +43,7 @@ token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding
 # Assuming peft_llm_model is loaded but NOT yet merged
 embed_layer = peft_llm_model.get_input_embeddings()
 
-if hasattr(embed_layer, "modules_to_save"):
+"""if hasattr(embed_layer, "modules_to_save"):
     print("Surgically syncing trained embeddings to base model...")
     # .data.copy_() ensures we overwrite the actual memory buffer
     trained_weights = embed_layer.modules_to_save.default.weight.data
@@ -54,12 +54,12 @@ head_layer = peft_llm_model.get_output_embeddings()
 if hasattr(head_layer, "modules_to_save"):
     trained_head = head_layer.modules_to_save.default.weight.data
     head_layer.original_module.weight.data.copy_(trained_head)
-print(f"Module Class: {type(embed_layer)}")
-
-peft_llm_model_1=peft_llm_model.merge_and_unload()
-final_embed_layer=peft_llm_model_1.get_input_embeddings()
+print(f"Module Class: {type(embed_layer)}")"""
 
 """
+peft_llm_model_1=peft_llm_model.merge_and_unload()
+final_embed_layer=peft_llm_model_1.get_input_embeddings()"""
+
 # Check if PEFT actually created the wrapper for modules_to_save
 if hasattr(embed_layer, "modules_to_save"):
     # This is the TENSOR that was actually updated during training
@@ -74,36 +74,12 @@ if hasattr(embed_layer, "modules_to_save"):
     else:
         print("✅ Success: The embeddings have been updated by training!")
 else:
-    print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")"""
-
-"""with torch.no_grad():
-embed_module = peft_llm_model.get_input_embeddings()
-"""
-###print(f"Type of embedding: {type(embed_module)}") 
-# Should show 'ModulesToSaveWrapper'
-# 3. GET THE ACTUAL TRAINED TENSOR
-# In PEFT, the trained weights for modules_to_save are hidden here:
-"""
-if hasattr(embed_module, "modules_to_save"):
-    trained_weights = embed_module.modules_to_save.default.weight
-    print("Found trained weights in modules_to_save!")
-else:
-    trained_weights = embed_module.weight"""
-
-##trained_input_embed=torch.load(_input_embed_layer,map_location=device)
-"""print(f"input_embed_keys:{trained_input_embed.keys()}")
-input_embed_weights=trained_input_embed['weight']"""
-
-print('loaded_embeddings')
-### without calculating the gradients
+    print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
+    
+    
+    
+"""   
 with torch.no_grad():
-    vocab_embedding=final_embed_layer(token_ids[0]).to(peft_llm_model.device)
-
-vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
-##embeddings = F.normalize(vocab_embedding, p=2, dim=1)
-vocab_embedding_npy=vocab_embedding.cpu().to(torch.float32).numpy()
-
-np.save(embedding_file,vocab_embedding_npy)
-print('file_saved')
+    embed_module = peft_llm_model.get_input_embeddings()"""
 
     
