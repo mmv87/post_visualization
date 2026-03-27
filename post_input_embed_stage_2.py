@@ -82,7 +82,7 @@ else:
 
     
 with torch.no_grad():
-    vocab_embeddings = trained_weights(token_ids[0])
+    vocab_embeddings = embed_layer.modules_to_save.default(token_ids[0])
 
 print(f'vocab_embedding:{vocab_embeddings.shape}')
 
