@@ -54,8 +54,8 @@ if hasattr(head_layer, "modules_to_save"):
     head_layer.original_module.weight.data.copy_(trained_head)
 print(f"Module Class: {type(embed_layer)}")
 
-peft_llm_model=peft_llm_model.merge_and_unload()
-final_embed_layer=peft_llm_model.get_input_embeddings()
+peft_llm_model_1=peft_llm_model.merge_and_unload()
+final_embed_layer=peft_llm_model_1.get_input_embeddings()
 
 """
 # Check if PEFT actually created the wrapper for modules_to_save
