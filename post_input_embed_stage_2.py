@@ -79,8 +79,13 @@ else:
     print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
     
     
-"""
 with torch.no_grad():
-    embed_module = peft_llm_model.get_input_embeddings()
-"""
-    
+    vocab_embeddings = embed_layer(token_ids[0])
+
+
+vocab_embedding = vocab_embeddings.view(-1, vocab_embeddings.shape[-1])
+##embeddings = F.normalize(vocab_embedding, p=2, dim=1)
+vocab_embedding_npy=vocab_embedding.cpu().to(torch.float32).numpy()
+
+np.save(embedding_file,vocab_embedding_npy)
+print('file_saved')
