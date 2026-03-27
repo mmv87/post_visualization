@@ -35,20 +35,20 @@ tokenizer=AutoTokenizer.from_pretrained(model_name,local_files_only=True)
 
 special_token_dict={'pad_token':"<|pad|>","additional_special_tokens":['<ts>','<ts/>']}
 tokenizer.add_special_tokens(special_token_dict)
-##model.resize_token_embeddings(len(tokenizer))
+model.resize_token_embeddings(len(tokenizer))
 
 peft_llm_model=PeftModel.from_pretrained(model, f"{checkpoint_dir}/phi4-ts-adapter_ver2")
-peft_llm_model.resize_token_embeddings(len(tokenizer))
 token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
 
 # Assuming peft_llm_model is loaded but NOT yet merged
 embed_layer = peft_llm_model.get_input_embeddings()
+
 if hasattr(embed_layer, "modules_to_save"):
     print("Surgically syncing trained embeddings to base model...")
     # .data.copy_() ensures we overwrite the actual memory buffer
     trained_weights = embed_layer.modules_to_save.default.weight.data
     embed_layer.original_module.weight.data.copy_(trained_weights)
-
+    
 # 3. Repeat for the LM Head (if you saved it)
 head_layer = peft_llm_model.get_output_embeddings()
 if hasattr(head_layer, "modules_to_save"):
@@ -76,10 +76,9 @@ if hasattr(embed_layer, "modules_to_save"):
 else:
     print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")"""
 
+"""with torch.no_grad():
+embed_module = peft_llm_model.get_input_embeddings()
 """
-with torch.no_grad():
-    embed_module = peft_llm_model.get_input_embeddings()
-    """
 ###print(f"Type of embedding: {type(embed_module)}") 
 # Should show 'ModulesToSaveWrapper'
 # 3. GET THE ACTUAL TRAINED TENSOR
