@@ -28,7 +28,7 @@ for name, module in model.named_modules():
               
 labels=[tokenizer.decode(t) for t in token_ids[0]]
 ##load the embedding_npy
-embed_1=np.load("./base_model_input_embedding.npy")
+embed_1=np.load("./stage_2_input_embed.npy")
 ##cmap = plt.cm.viridis
 
 sim_np=cosine_similarity(embed_1)
