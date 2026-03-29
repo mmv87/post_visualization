@@ -60,7 +60,6 @@ print(f"Module Class: {type(embed_layer)}")"""
 peft_llm_model_1=peft_llm_model.merge_and_unload()
 final_embed_layer=peft_llm_model_1.get_input_embeddings()"""
 
-
 # Check if PEFT actually created the wrapper for modules_to_save
 if hasattr(embed_layer, "modules_to_save"):
     # This is the TENSOR that was actually updated during training
@@ -74,11 +73,11 @@ if hasattr(embed_layer, "modules_to_save"):
     diff = torch.abs(trained_weights - original_weights).max().item()
     print(f"Max difference in weights: {diff:.3f}")
     if diff == 0:
-        print("❌ Training Error: The 'trained' weights are identical to the base weights.")
+        print("Training Error: The 'trained' weights are identical to the base weights.")
     else:
-        print("✅ Success: The embeddings have been updated by training!")
+        print(" Success: The embeddings have been updated by training!")
 else:
-    print("❌ Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
+    print("Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
 
     
 with torch.no_grad():
