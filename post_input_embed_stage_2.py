@@ -23,7 +23,7 @@ model_name="/home/mmk/projects/def-zonata/mmk/hf_cache/hub/models--microsoft--Ph
 checkpoint_dir="/home/mmk/projects/def-zonata/mmk/version_2/stage_2"
 
 ##_input_embed_layer=os.path.join(os.environ["SLURM_TMPDIR"],'aligned_embeddings_ver2.pt')
-embedding_file=os.path.join(os.environ["SLURM_TMPDIR"],'stage_2_input_embed.npy')
+embedding_file=os.path.join(os.environ["SLURM_TMPDIR"],'stage_2_input_embed_1.npy')
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_HUB_OFFLINE"] = "1"
@@ -79,7 +79,6 @@ if hasattr(embed_layer, "modules_to_save"):
 else:
     print("Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
 
-    
 with torch.no_grad():
     vocab_embeddings = embed_layer.modules_to_save.default(token_ids[0])
 
