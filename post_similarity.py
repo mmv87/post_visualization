@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from transformers import AutoModelForCausalLM,AutoTokenizer
+import torch.nn as nn
 
 ##vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
 vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
@@ -19,17 +20,16 @@ model=AutoModelForCausalLM.from_pretrained(modelpath,local_files_only=True)
     print(f"name:{name}, parameter:{param.shape})"""
     
     ###to chechthe linear layers
-import torch.nn as nn
 """for name, module in model.named_modules():
     if isinstance(module, nn.Linear):
         print(f"Found a Linear Layer: {name}")
     else:
         print(f"a module: {name},{type(module)}")"""
-        
+""""       
 embed_layer=model.get_input_embeddings()
 lm_head = model.get_output_embeddings()
 
-print(type(embed_layer.weight),type(lm_head.weight))
+print(type(embed_layer.weight),type(lm_head.weight))"""
 """
 for name,params in embed_layer.named_parameters():
     if params.requires_grad==True:
@@ -37,13 +37,10 @@ for name,params in embed_layer.named_parameters():
     else:
         pass"""
     
-        
-"""              
 labels=[tokenizer.decode(t) for t in token_ids[0]]
 ##load the embedding_npy
-embed_1=np.load("./stage_2_input_embed.npy")
+embed_1=np.load("./stage_2_input_embed_1.npy")
 ##cmap = plt.cm.viridis
-
 sim_np=cosine_similarity(embed_1)
 plt.figure(figsize=(10, 8))
 plt.imshow(sim_np, cmap='viridis',vmin=-1, vmax=1)
@@ -52,8 +49,7 @@ plt.xticks(range(len(labels)), labels, rotation=45)
 plt.yticks(range(len(labels)), labels)
 
 plt.title("Pairwise Token Similarity")
-plt.show()"""
-
+plt.show()
 ##print(sim.shape)
 
 

@@ -39,7 +39,7 @@ model.resize_token_embeddings(len(tokenizer))
 
 peft_llm_model=PeftModel.from_pretrained(model, f"{checkpoint_dir}/phi4-ts-adapter_ver2")
 token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
-
+peft_llm_model.eval()
 # Assuming peft_llm_model is loaded but NOT yet merged
 embed_layer = peft_llm_model.get_input_embeddings()
 
@@ -86,7 +86,7 @@ print(f'vocab_embedding:{vocab_embeddings.shape}')
 
 vocab_embedding = vocab_embeddings.view(-1, vocab_embeddings.shape[-1])
 ##embeddings = F.normalize(vocab_embedding, p=2, dim=1)
-vocab_embedding_npy=vocab_embedding.cpu().to(torch.float32).numpy()
+vocab_embedding_npy=vocab_embedding.cpu().to().numpy()
 
 np.save(embedding_file,vocab_embedding_npy)
 print('file_saved')
