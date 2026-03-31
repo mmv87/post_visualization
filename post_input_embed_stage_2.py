@@ -42,6 +42,7 @@ token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding
 peft_llm_model.eval()
 # Assuming peft_llm_model is loaded but NOT yet merged
 embed_layer = peft_llm_model.get_input_embeddings()
+lm_layer = peft_llm_model.get_output_embeddings()
 
 """if hasattr(embed_layer, "modules_to_save"):
     print("Surgically syncing trained embeddings to base model...")
@@ -64,13 +65,14 @@ final_embed_layer=peft_llm_model_1.get_input_embeddings()"""
 if hasattr(embed_layer, "modules_to_save"):
     # This is the TENSOR that was actually updated during training
     trained_weights = embed_layer.modules_to_save.default.weight
+    trained_lm_weights =lm_layer.modules_to_save.default.weight
     print(trained_weights.shape)
     # This is the ORIGINAL tensor from the base model
     original_weights = embed_layer.original_module.weight
     print(original_weights.shape)
     
     # Measure the difference
-    diff = torch.abs(trained_weights - original_weights).max().item()
+    diff = torch.abs(trained_weights - trained_lm_weights).max().item()
     print(f"Max difference in weights: {diff:.3f}")
     if diff == 0:
         print("Training Error: The 'trained' weights are identical to the base weights.")
@@ -81,7 +83,7 @@ else:
 
 with torch.no_grad():
     vocab_embeddings = embed_layer.modules_to_save.default(token_ids[0])
-
+    
 print(f'vocab_embedding:{vocab_embeddings.shape}')
 
 vocab_embedding = vocab_embeddings.view(-1, vocab_embeddings.shape[-1])

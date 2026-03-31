@@ -39,7 +39,7 @@ for name,params in embed_layer.named_parameters():
 
 labels=[tokenizer.decode(t) for t in token_ids[0]]
 ##load the embedding_npy
-embed_1=np.load("./base_model_input_embedding.npy")
+embed_1=np.load("./stage_2_input_embed_upd.npy")
 ##cmap = plt.cm.viridis
 sim_np=cosine_similarity(embed_1)
 plt.figure(figsize=(10, 8))
