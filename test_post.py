@@ -21,7 +21,6 @@ device ='cuda' if torch.cuda.is_available() else 'cpu'
 
 ##location of llm_base model
 local_model_path="D:/hf_cache/hub/models--microsoft--Phi-4-mini-reasoning/snapshots/0e3b1e2d02ee478a3743abe3f629e9c0cb722e0a"
-
 model_name="/home/mmk/projects/def-zonata/mmk/hf_cache/hub/models--microsoft--Phi-4-mini-reasoning/snapshots/7a8c4e2e81eae20a606d811f475d7dc316dd916a"
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_HUB_OFFLINE"] = "1"
@@ -37,7 +36,6 @@ model_dtype=next(model.parameters()).dtype
 special_token_dict={'pad_token':"<|pad|>","additional_special_tokens":['<ts>','<ts/>']}
 tokenizer.add_special_tokens(special_token_dict)
 model.resize_token_embeddings(len(tokenizer))
-
 ## to expand the tokenizer to add the special tokens <ts> <ts/>
 """special_token_dict={'pad_token':"<|pad|>","additional_special_tokens":['<ts>','<ts/>']}
 tokenizer.add_special_tokens(special_token_dict)"""

@@ -23,7 +23,7 @@ model_name="/home/mmk/projects/def-zonata/mmk/hf_cache/hub/models--microsoft--Ph
 checkpoint_dir="/home/mmk/projects/def-zonata/mmk/version_2/stage_2"
 
 ##_input_embed_layer=os.path.join(os.environ["SLURM_TMPDIR"],'aligned_embeddings_ver2.pt')
-embedding_file=os.path.join(os.environ["SLURM_TMPDIR"],'stage_2_input_embed_1.npy')
+embedding_file=os.path.join(os.environ["SLURM_TMPDIR"],'stage_2_input_embed_upd.npy')
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_HUB_OFFLINE"] = "1"
@@ -86,7 +86,7 @@ print(f'vocab_embedding:{vocab_embeddings.shape}')
 
 vocab_embedding = vocab_embeddings.view(-1, vocab_embeddings.shape[-1])
 ##embeddings = F.normalize(vocab_embedding, p=2, dim=1)
-vocab_embedding_npy=vocab_embedding.cpu().to().numpy()
+vocab_embedding_npy=vocab_embedding.detach().cpu().float().numpy()
 
 np.save(embedding_file,vocab_embedding_npy)
 print('file_saved')

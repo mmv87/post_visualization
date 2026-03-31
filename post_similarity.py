@@ -19,12 +19,12 @@ model=AutoModelForCausalLM.from_pretrained(modelpath,local_files_only=True)
 
 """for name, param in model.named_parameters():
     print(f"name:{name}, parameter:{param.shape}")"""
-
+"""
 for name, module in model.named_modules():
     if isinstance(module, nn.Linear):
         print(f"Found a Linear Layer: {name}")
     else:
-        print(f"a module: {name},{type(module)}")
+        print(f"a module: {name},{type(module)}")"""
 ###to chechthe linear layers
        
 """    
@@ -36,18 +36,18 @@ for name,params in embed_layer.named_parameters():
         print(params.shape)
     else:
         pass"""
-"""
+
 labels=[tokenizer.decode(t) for t in token_ids[0]]
 ##load the embedding_npy
-embed_1=np.load("./stage_2_input_embed_1.npy")
+embed_1=np.load("./base_model_input_embedding.npy")
 ##cmap = plt.cm.viridis
 sim_np=cosine_similarity(embed_1)
 plt.figure(figsize=(10, 8))
-plt.imshow(sim_np, cmap='viridis',vmin=-1, vmax=1)
+plt.imshow(sim_np, cmap='viridis',vmin=0, vmax=1)
 plt.colorbar()
 plt.xticks(range(len(labels)), labels, rotation=45)
 plt.yticks(range(len(labels)), labels)
 
 plt.title("Pairwise Token Similarity")
-plt.show()"""
+plt.show()
 ##print(sim.shape)
