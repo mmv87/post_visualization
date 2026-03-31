@@ -36,6 +36,13 @@ model_dtype=next(model.parameters()).dtype
 special_token_dict={'pad_token':"<|pad|>","additional_special_tokens":['<ts>','<ts/>']}
 tokenizer.add_special_tokens(special_token_dict)
 model.resize_token_embeddings(len(tokenizer))
+embed_layer=model.get_input_embeddings()
+embed_layer.requires_grad_(True)
+print(f'lm_head_check:{model.get_output_embeddings().weight.requires_grad}')
+
+#print(f'embedding_layer_type:{type(embed_layer)}')
+
+
 ## to expand the tokenizer to add the special tokens <ts> <ts/>
 """special_token_dict={'pad_token':"<|pad|>","additional_special_tokens":['<ts>','<ts/>']}
 tokenizer.add_special_tokens(special_token_dict)"""
@@ -51,11 +58,17 @@ dataset= ts_multimodal_text(128,128,_json_file,tokenizer,device=device,model_dty
 dataloader=DataLoader(dataset,batch_size=1,shuffle=True,collate_fn=lambda b:collate_func(b,tokenizer=tokenizer,device=device))"""
 
 ##Lora_config defintion based on best practices
-peft_config = LoraConfig(
+"""peft_config = LoraConfig(
             r=16, lora_alpha=32,
             target_modules=["o_proj",'qkv_proj','gate_up_proj','down_proj'],
-            modules_to_save=["embed_tokens","lm_head"],lora_dropout=0.1, # important for Stage-2  as to keep th ties
+            modules_to_save=["embed_tokens"],lora_dropout=0.1, # important for Stage-2  as to keep th ties
             task_type="CAUSAL_LM",ensure_weight_tying=True)
 
 peft_model=get_peft_model(model,peft_config)
-print(peft_model.print_trainable_parameters())
+##print(peft_model.print_trainable_parameters())
+
+print(peft_model)
+
+print(f'peft_model_parameter_count:{peft_model.print_trainable_parameters()}')"""
+
+##print(f'base_model_parameters :{model.print_trainable_parameters()}')

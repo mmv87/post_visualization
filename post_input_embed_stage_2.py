@@ -71,13 +71,13 @@ if hasattr(embed_layer, "modules_to_save"):
     original_weights = embed_layer.original_module.weight
     print(original_weights.shape)
     
-    # Measure the difference
+    # Measure the difference between the lm_weights
     diff = torch.abs(trained_weights - trained_lm_weights).max().item()
     print(f"Max difference in weights: {diff:.3f}")
-    if diff == 0:
+    """if diff == 0:
         print("Training Error: The 'trained' weights are identical to the base weights.")
     else:
-        print(" Success: The embeddings have been updated by training!")
+        print(" Success: The embeddings have been updated by training!")"""
 else:
     print("Config Error: 'modules_to_save' wrapper not found. Check your LoraConfig.")
 
