@@ -41,8 +41,6 @@ embed_layer.requires_grad_(True)
 print(f'lm_head_check:{model.get_output_embeddings().weight.requires_grad}')
 
 #print(f'embedding_layer_type:{type(embed_layer)}')
-
-
 ## to expand the tokenizer to add the special tokens <ts> <ts/>
 """special_token_dict={'pad_token':"<|pad|>","additional_special_tokens":['<ts>','<ts/>']}
 tokenizer.add_special_tokens(special_token_dict)"""

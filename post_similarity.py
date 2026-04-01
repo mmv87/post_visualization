@@ -6,6 +6,7 @@ import seaborn as sns
 from transformers import AutoModelForCausalLM,AutoTokenizer
 import torch.nn as nn
 import math
+import os
 
 ##vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
 vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
@@ -39,16 +40,16 @@ for name,params in embed_layer.named_parameters():
         print(params.shape)
     else:
         pass"""
-
+path="D:/Doctoral_research/code_implementation/Time_series_reasoning/"
 labels=[tokenizer.decode(t) for t in token_ids[0]]
 ##load the embedding_npy
-stage_2_ft=np.load("./stage_1_input_embed.npy")
+
+stage_1_ft=np.load(os.path.join(path,"stage_1_input_embed_rerun.npy"))
 base=np.load("./base_model_input_embedding.npy")
 
-tast_vector_matrix=stage_2_ft-base
+tast_vector_matrix=stage_1_ft-base
 
 indices = [tokenizer.convert_tokens_to_ids(token) for token in vocab]
-
 # Extract the Deltas for just these tokens
 ###domain_deltas = tast_vector_matrix[indices]
 task_sim_matrix = cosine_similarity(tast_vector_matrix.astype(np.float64))

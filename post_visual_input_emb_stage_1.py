@@ -16,11 +16,19 @@ import matplotlib.pyplot as plt
 #vocabulary
 vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
 
+non_ts_tokens=[
+    "table", "chair", "window", "bottle", "phone", "keyboard", "screen",
+    "friend", "family", "teacher", "conversation", "emotion", "memory",
+    "river", "mountain", "forest", "ocean", "cloud", "wind",
+    "freedom", "justice", "belief", "idea", "knowledge",
+    "build", "create", "design", "imagine", "explore"
+]
+
 ##model location in the login node
 model_name="/home/mmk/projects/def-zonata/mmk/hf_cache/hub/models--microsoft--Phi-4-mini-reasoning/snapshots/7a8c4e2e81eae20a606d811f475d7dc316dd916a"
 
 _input_embed_layer=os.path.join(os.environ["SLURM_TMPDIR"],'aligned_embeddings_ver2.pt')
-embedding_file=os.path.join(os.environ["SLURM_TMPDIR"],'stage_1_input_embed.npy')
+embedding_file=os.path.join(os.environ["SLURM_TMPDIR"],'stage_1_input_embed_upd.npy')
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_HUB_OFFLINE"] = "1"
@@ -40,12 +48,12 @@ token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding
 input_embed_weights=trained_input_embed['weight']"""
 
 print('loaded_embeddings')
-
+model.get_input_embeddings().load_state_dict(torch.load(_input_embed_layer))
 ### without calculating the gradients
 with torch.no_grad():
     ##input_embeddings.weight.copy_(input_embed_weights)
-    model.get_input_embeddings().load_state_dict(torch.load(_input_embed_layer))
     vocab_embedding=model.get_input_embeddings()(token_ids[0])
+    
 
 vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
 ##embeddings = F.normalize(vocab_embedding, p=2, dim=1)
