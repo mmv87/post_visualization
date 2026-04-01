@@ -48,13 +48,12 @@ token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding
 input_embed_weights=trained_input_embed['weight']"""
 
 print('loaded_embeddings')
-model.get_input_embeddings().load_state_dict(torch.load(_input_embed_layer))
+embedding_layer=model.get_input_embeddings().load_state_dict(torch.load(_input_embed_layer))
 ### without calculating the gradients
 with torch.no_grad():
     ##input_embeddings.weight.copy_(input_embed_weights)
-    vocab_embedding=model.get_input_embeddings()(token_ids[0])
+    vocab_embedding=embedding_layer(token_ids[0])
     
-
 vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
 ##embeddings = F.normalize(vocab_embedding, p=2, dim=1)
 vocab_embedding_npy=vocab_embedding.cpu().to(torch.float32).numpy()
