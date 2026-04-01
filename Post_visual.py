@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 
 ### to get the vocab for plotting
 vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
+near_ts_vocab=['value signal level reading measurement observation metric indicator variable system process mechanism response output input feedback control state condition analysis estimation evaluation model prediction inference correlation regression parameter coefficient distribution function sample dataset feature dimension']
+
+words = vocab[0].split()
+print(f'total words:{len(words)}')
 
 ###print(len(vocab))
 device ='cuda' if torch.cuda.is_available() else 'cpu'
@@ -34,17 +38,18 @@ token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding
 embeddings_layer=model.get_input_embeddings()
 
 with torch.no_grad():
-    embeddings=embeddings_layer(token_ids)
+    embeddings=embeddings_layer(token_ids[0])
+
+print(f'token_len :{embeddings.shape}')
 
 embeddings = embeddings.view(-1, embeddings.shape[-1])
 _file_model_embedding="./base_model_input_embedding.npy"
 
 import torch.nn.functional as F
 embeddings = F.normalize(embeddings, p=2, dim=1)
-
 np_embedding=embeddings.detach().cpu().to(torch.float32).numpy()
 np.save(_file_model_embedding,np_embedding)
-
+ 
 """pca = PCA(n_components=24)
 embeddings_pca = pca.fit_transform(embeddings.cpu().numpy())
 print(f'shape_after_pca:{embeddings_pca.shape}')

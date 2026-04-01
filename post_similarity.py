@@ -40,11 +40,11 @@ for name,params in embed_layer.named_parameters():
         print(params.shape)
     else:
         pass"""
-path="D:/Doctoral_research/code_implementation/Time_series_reasoning/"
+path="D:/Doctoral_research/code_implementation/"
 labels=[tokenizer.decode(t) for t in token_ids[0]]
 ##load the embedding_npy
 
-stage_1_ft=np.load(os.path.join(path,"stage_1_input_embed_rerun.npy"))
+stage_1_ft=np.load(os.path.join(path,"stage_1_input_embed_upd.npy"))
 base=np.load("./base_model_input_embedding.npy")
 
 tast_vector_matrix=stage_1_ft-base
@@ -72,7 +72,7 @@ sns.heatmap(
     yticklabels=task_sim_matrix, 
     annot=False,       # Shows the raw numbers in the cells
     fmt=".3f", 
-    vmin=0.5,
+    vmin=-1,
     vmax=1,# Format to 3 decimal places
             # The upper bound of your sensitive range
     cmap="YlGnBu",    # Good for showing "depth" of similarity       # Optional: you can visually hide the diagonal entirely

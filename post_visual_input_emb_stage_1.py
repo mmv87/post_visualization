@@ -15,14 +15,7 @@ import matplotlib.pyplot as plt
 
 #vocabulary
 vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
-
-non_ts_tokens=[
-    "table", "chair", "window", "bottle", "phone", "keyboard", "screen",
-    "friend", "family", "teacher", "conversation", "emotion", "memory",
-    "river", "mountain", "forest", "ocean", "cloud", "wind",
-    "freedom", "justice", "belief", "idea", "knowledge",
-    "build", "create", "design", "imagine", "explore"
-]
+near_ts_tokens=['value signal level reading measurement observation metric indicator variable system process mechanism response output input feedback control state condition analysis estimation evaluation model prediction inference correlation regression parameter coefficient distribution function sample dataset feature dimension']
 
 ##model location in the login node
 model_name="/home/mmk/projects/def-zonata/mmk/hf_cache/hub/models--microsoft--Phi-4-mini-reasoning/snapshots/7a8c4e2e81eae20a606d811f475d7dc316dd916a"
@@ -57,8 +50,9 @@ with torch.no_grad():
     vocab_embedding=embedding_layer(token_ids[0])
     
 vocab_embedding = vocab_embedding.view(-1, vocab_embedding.shape[-1])
-##embeddings = F.normalize(vocab_embedding, p=2, dim=1)
-vocab_embedding_npy=vocab_embedding.cpu().to(torch.float32).numpy()
+##normalize
+vocab_embedding_norm = F.normalize(vocab_embedding, p=2, dim=1)
+vocab_embedding_npy=vocab_embedding_norm.cpu().to(torch.float32).numpy()
 
 np.save(embedding_file,vocab_embedding_npy)
 print('file_saved')
