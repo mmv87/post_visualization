@@ -48,7 +48,9 @@ token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding
 input_embed_weights=trained_input_embed['weight']"""
 
 print('loaded_embeddings')
-embedding_layer=model.get_input_embeddings().load_state_dict(torch.load(_input_embed_layer))
+embedding_layer=model.get_input_embeddings()
+embed_state_dict = torch.load(_input_embed_layer,map_location=device)
+embedding_layer.load_state_dict(embed_state_dict)
 ### without calculating the gradients
 with torch.no_grad():
     ##input_embeddings.weight.copy_(input_embed_weights)
