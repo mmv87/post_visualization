@@ -43,17 +43,13 @@ for name,params in embed_layer.named_parameters():
 path="D:/Doctoral_research/code_implementation/"
 labels=[tokenizer.decode(t) for t in token_ids[0]]
 ##load the embedding_npy
-
-stage_1_ft=np.load(os.path.join(path,"stage_1_input_embed_upd.npy"))
+stage_1_ft=np.load(os.path.join(path,"stage_2_input_embed_upd2.npy"))
 base=np.load("./base_model_input_embedding.npy")
-
 tast_vector_matrix=stage_1_ft-base
-
 indices = [tokenizer.convert_tokens_to_ids(token) for token in vocab]
 # Extract the Deltas for just these tokens
 ###domain_deltas = tast_vector_matrix[indices]
 task_sim_matrix = cosine_similarity(tast_vector_matrix.astype(np.float64))
-
 """##cmap = plt.cm.viridis
 sim_np=cosine_similarity(domain_deltas)
 mask = np.eye(sim_np.shape[0], dtype=bool)
@@ -61,27 +57,23 @@ off_diag_values = sim_np[~mask]
 # 2. Basic Min/Max
 actual_min = off_diag_values.min()
 actual_max = off_diag_values.max()"""
-
 ###print(f"Absolute Range (excluding diagonal): {actual_min:.4f} to {actual_max:.4f}")
-
 plt.figure(figsize=(10, 8))
-
 sns.heatmap(
     task_sim_matrix, 
     xticklabels=task_sim_matrix, 
     yticklabels=task_sim_matrix, 
     annot=False,       # Shows the raw numbers in the cells
     fmt=".3f", 
-    vmin=-1,
-    vmax=1,# Format to 3 decimal places
-            # The upper bound of your sensitive range
+    vmin=0.,
+    vmax=1,#Format to 3 decimal places
+            #The upper bound of your sensitive range
     cmap="YlGnBu",    # Good for showing "depth" of similarity       # Optional: you can visually hide the diagonal entirely
 )
 ##plt.imshow(sim_np, cmap='viridis',vmin=0.3704, vmax=0.9340)
 ##plt.colorbar()
 plt.xticks(range(len(labels)), labels, rotation=45)
 plt.yticks(range(len(labels)), labels,rotation=45)
-
 plt.title("Pairwise Token Similarity")
 plt.show()
 ##print(sim.shape)

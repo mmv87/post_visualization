@@ -17,13 +17,14 @@ import matplotlib.pyplot as plt
 
 #vocabulary
 vocab=['upward downward trend slope increase decrease rise fall spike dip fluctuate oscillate seasonality cycle periodicity volatility stability plateau peak trough']
+near_ts_tokens=['value signal level reading measurement observation metric indicator variable system process mechanism response output input feedback control state condition analysis estimation evaluation model prediction inference correlation regression parameter coefficient distribution function sample dataset feature dimension']
 
 ##model location in the login node
 model_name="/home/mmk/projects/def-zonata/mmk/hf_cache/hub/models--microsoft--Phi-4-mini-reasoning/snapshots/7a8c4e2e81eae20a606d811f475d7dc316dd916a"
 checkpoint_dir="/home/mmk/projects/def-zonata/mmk/version_2/stage_2"
 
 ##_input_embed_layer=os.path.join(os.environ["SLURM_TMPDIR"],'aligned_embeddings_ver2.pt')
-embedding_file=os.path.join(os.environ["SLURM_TMPDIR"],'stage_2_input_embed_upd2.npy')
+embedding_file=os.path.join(os.environ["SLURM_TMPDIR"],'stage_2_inp_embed_non_ts.npy')
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_HUB_OFFLINE"] = "1"
@@ -38,7 +39,7 @@ tokenizer.add_special_tokens(special_token_dict)
 model.resize_token_embeddings(len(tokenizer))
 
 peft_llm_model=PeftModel.from_pretrained(model, f"{checkpoint_dir}/phi4-ts-adapter_ver2")
-token_ids = tokenizer(vocab,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
+token_ids = tokenizer(near_ts_tokens,return_tensors='pt',add_special_tokens=False,padding=True)['input_ids']
 peft_llm_model.eval()
 # Assuming peft_llm_model is loaded but NOT yet merged
 embed_layer = peft_llm_model.get_input_embeddings()
